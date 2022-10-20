@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import org.apache.logging.log4j.Logger;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -29,6 +25,10 @@ import com.datastax.oss.driver.api.core.metadata.Node;
 import com.datastax.oss.driver.api.core.session.Request;
 import com.datastax.oss.driver.api.core.tracker.RequestTracker;
 import com.datastax.oss.driver.api.core.type.reflect.GenericType;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
 public class CassandraSearchOperations implements Closeable
 {
@@ -50,7 +50,7 @@ public class CassandraSearchOperations implements Closeable
 	
 	private PreparedStatement preparedCountStatement;
 
-	private static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+	private static NashornScriptEngineFactory sef = new org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory();
 	
 	public CassandraSearchOperations(String aHost, int aPort, int aFetchLimit, String aDataCenter, String aTagsIncl, Logger aLog) throws Exception
 	{
@@ -109,9 +109,9 @@ public class CassandraSearchOperations implements Closeable
 		expressionUnified = expressionUnified.replaceAll("0", "false");
 		
 		try
-		{            
-            ScriptEngine se = scriptEngineManager.getEngineByName("JavaScript");            
-            boolean result = (boolean)se.eval(expressionUnified);
+		{
+			ScriptEngine nashornEngine = sef.getScriptEngine();
+            boolean result = (boolean)nashornEngine.eval(expressionUnified);
             return result;
         }
 		catch (ScriptException e)

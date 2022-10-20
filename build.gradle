@@ -56,6 +56,8 @@ dependencies {
     
     implementation 'com.datastax.oss:java-driver-core:4.4.0'
     implementation 'com.datastax.oss:java-driver-query-builder:4.4.0'
+    
+    implementation 'org.openjdk.nashorn:nashorn-core:15.4'
 
     implementation fileTree(dir: LOGSTASH_CORE_PATH, include: "lib/jars/logstash-core.jar")
 
